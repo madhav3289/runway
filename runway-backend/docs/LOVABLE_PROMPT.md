@@ -1,0 +1,26 @@
+# Prompt for Lovable
+
+Paste everything below the line into Lovable. Then attach `docs/API.md` (or paste it) as the API reference.
+Set the env var `VITE_API_URL` to your deployed API base URL (no trailing slash).
+
+---
+
+Build a clean, modern web app called **Runway**: a cash-flow risk forecaster for students. It tells a user the probability that they run out of money before their next income, and when. The backend already exists as a REST API (contract attached). **Do not use Supabase, Lovable Cloud, or any other backend or database. Do not invent endpoints or mock data.** Call the API with `fetch` using `import.meta.env.VITE_API_URL`. Keep the JWT in memory and localStorage and send it as `Authorization: Bearer <token>`. All amounts from the API are integer paise: show them as rupees (₹, Indian digit grouping, no decimals for big numbers). Use **React with plain JavaScript (.jsx files, no TypeScript)**, built with Vite. Do **not** use Next.js, and do not add server-side rendering or API routes: this is a client-only single-page app that calls an external REST API. Use Tailwind, shadcn/ui, Recharts and React Router.
+
+**On app load:** call `GET /api/health?deep=true` in the background to wake the services. If any request fails with code `SIM_UNAVAILABLE` (503) show a friendly "Waking up the forecasting engine, retrying…" state and retry automatically every 4 seconds, up to 10 times.
+
+**Screens**
+1. **Landing / login:** short pitch, email + password sign in and register, and a prominent **"Try the demo"** button (`POST /api/auth/demo`). If any call returns `403 DEMO_READ_ONLY`, show a toast "Demo is read-only. Create an account to save changes."
+2. **Dashboard (main screen):**
+   - A big headline sentence built from `/api/simulate`: e.g. "**34% chance** you run out of money before 3 Nov, most likely around **28 Oct**". If `prob_zero` is 0, say "Looking safe: you ran out of money in none of the N simulated futures" (N = `n_runs`). Color it green under 10%, amber 10-40%, red above.
+   - A Recharts `ComposedChart`: shaded area between `bands.p10` and `bands.p90`, a line for `bands.p50`, a dashed zero line, x-axis from `bands.dates`. Tooltip shows the three values. Shading label: "80% of simulated futures fall in this band".
+   - A small second chart or bar showing `cumulative_prob_zero` over time.
+   - If `low_confidence` is true, show a warning banner with the text from `warnings`.
+   - Stat cards: current balance (from `/api/summary`), median end balance, average daily spend.
+3. **What-if panel (on the dashboard, right side or drawer):** one slider per category in `history.categories` (range 0 to 1.5, step 0.05, label "Food delivery: 80% of usual"), plus an "Add one-off income or expense" form (label, date, amount, income/expense toggle) that populates `extra_events`. Debounce changes by 300 ms and re-call `POST /api/simulate` with `multipliers` and `extra_events`. Show a subtle loading state on the chart while recalculating, and show the change vs the baseline ("−14 pts risk"). A "Save scenario" button (sends `save_as`), and a "Reset" button.
+4. **Data screen:** drag-and-drop CSV upload (`POST /api/imports`, multipart field `file`) with progress, the result summary (rows added, duplicates skipped, warnings), and a note that only HDFC-style CSVs and Date/Description/Amount CSVs are supported and statements never leave the user's own account. Below it, a paginated, searchable transactions table (`GET /api/transactions`) where the user can edit the category (dropdown from `/api/transactions/categories`) and toggle "one-off purchase" (`is_outlier`) and "own-account transfer" (`is_transfer`) with `PATCH`. Show outliers and transfers with a subtle badge. Also show a spending-by-category bar chart from `/api/summary` (hide categories with `fixed: true` or show them in a separate "fixed" group).
+5. **Income & bills screen:** CRUD for scheduled items (`/api/scheduled-items`): label, income/bill, amount, next date, repeats (once/weekly/monthly). Show it as a simple list with edit and delete.
+6. **Model accuracy screen:** button "Run backtest" (`POST /api/backtest`). Show `day_coverage` as a big percentage next to the target `nominal_coverage` (80%), the number of windows, `day_coverage_with_outliers`, and a Recharts chart for the most recent window drawing `actual_change_paise` against the `p10_change_paise`/`p90_change_paise` band. Add a short plain-English explainer: "We replay the past: at several past dates, we forecast the next 30 days using only earlier data, then check how often reality landed inside the 80% band." Show the API's `note` in small text.
+7. **Scenarios:** list from `/api/scenarios` with name, risk %, and date; clicking one re-renders its saved result.
+
+**Behavior and polish:** responsive, dark mode, empty states that guide the user ("Upload a statement to get your first forecast", or "Try the demo"), loading skeletons, and error toasts using the API's `error` message. If `/api/simulate` returns `NO_DATA`, route to the Data screen. Add a footer disclaimer: "Forecasts are statistical estimates based on your past spending, not financial advice." Keep the visual style calm and trustworthy: neutral background, one accent color, generous spacing. Put all API calls in a single `api.js` module so the data flow is easy to read.

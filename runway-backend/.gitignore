@@ -1,0 +1,32 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# dependencies and virtual environments
+node_modules/
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# build output, logs, coverage
+dist/
+build/
+coverage/
+*.log
+
+# editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# generated demo data
+db/demo_statement.csv
+
+# real bank data: never commit these
+private/
+*statement*.csv

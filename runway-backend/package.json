@@ -1,0 +1,16 @@
+{
+  "name": "runway",
+  "private": true,
+  "description": "Cash-flow risk forecaster: probability you run out of money before your next income",
+  "scripts": {
+    "install:all": "npm --prefix api install",
+    "dev": "concurrently -n api,sim -c blue,green \"npm --prefix api run dev\" \"npm run dev:sim\"",
+    "dev:sim": "cd sim && python -m flask --app app run --port 5001",
+    "db:setup": "npm --prefix api run db:setup",
+    "db:seed": "npm --prefix api run db:seed",
+    "test": "npm --prefix api test && cd sim && python -m pytest -q"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
