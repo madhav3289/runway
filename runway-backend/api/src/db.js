@@ -7,7 +7,9 @@ types.setTypeParser(1082, (v) => v);
 // BIGINT (paise) comes back as a string by default. Paise stay far below 2^53, so Number is safe.
 types.setTypeParser(20, (v) => parseInt(v, 10));
 
-const pool = new Pool({ connectionString: config.databaseUrl, max: 10 });
+// Serverless platforms start many short-lived instances, each with its own pool, so keep
+// the per-instance pool tiny there (set DB_POOL_MAX=1..3) and use Neon's pooled connection string.
+const pool = new Pool({ connectionString: config.databaseUrl, max: Number(process.env.DB_POOL_MAX) || 10 });
 pool.on('error', (err) => console.error('Unexpected Postgres error:', err.message));
 
 const query = (text, params) => pool.query(text, params);
