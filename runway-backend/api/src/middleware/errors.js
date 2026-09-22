@@ -12,7 +12,7 @@ const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).cat
 
 const notFound = (req, res) => res.status(404).json({ error: 'Not found', code: 'NOT_FOUND' });
 
-// eslint-disable-next-line no-unused-vars
+
 const errorHandler = (err, req, res, next) => {
   if (err instanceof HttpError) {
     return res.status(err.status).json({ error: err.message, code: err.code, details: err.details });
