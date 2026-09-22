@@ -5,8 +5,10 @@ the next allowance, and how sure it is.** Upload a bank statement and get a prob
 ("34% chance you run out before 3 Nov, most likely around 28 Oct"), a confidence band for
 your balance, and what-if sliders ("what if I cut food delivery by 20%?").
 
-**Live app:** https://runway-xi-jade.vercel.app/
+**Live app:** 
+<br>
 **API:** https://api-gamma-rosy-43.vercel.app
+<br>
 **Demo login:** click **Try the demo** on the landing page — a seeded, read-only account, no sign-up needed.
 
 ![CI](https://github.com/madhav3289/runway/actions/workflows/ci.yml/badge.svg)
