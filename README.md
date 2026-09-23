@@ -5,7 +5,7 @@ the next allowance, and how sure it is.** Upload a bank statement and get a prob
 ("34% chance you run out before 3 Nov, most likely around 28 Oct"), a confidence band for
 your balance, and what-if sliders ("what if I cut food delivery by 20%?").
 
-**Live app:** 
+**Live app:** https://runway-beta-pink.vercel.app/
 <br>
 **API:** https://api-gamma-rosy-43.vercel.app
 <br>
